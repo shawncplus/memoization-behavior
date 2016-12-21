@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>memoization-behavior test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="x-memoize.html">
+  </head>
+  <body>
+    <test-fixture id="basic">
+      <template>
+        <x-memoize></x-memoize>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('computed', function() {
+        test('test computed property memoization', function () {
+          var el = fixture('basic');
+          assert.isUndefined(el.computeFullName.cache);
+          el.first = 'Shawn';
+          el.last = 'Biddle';
+          assert.equal(el.fullName, 'Shawn Biddle');
+
+          var key = el.properties.fullName.hashFn(el.first, el.last);
+          expect(el.computeFullName.cache).to.have.property(key);
+          assert.equal(el.computeFullName.cache[key], el.fullName);
+        });
+      });
+    </script>
+  </body>
+</html>

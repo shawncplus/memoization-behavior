@@ -1,0 +1,126 @@
+<!--
+@license
+Copyright (c) 2016 Shawn Biddle
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-->
+<script>
+  window.Biddle = window.Biddle || {};
+/**
+`Biddle.MemoizationBehavior` allows you to define a computed property
+as memoizable (http://en.wikipedia.org/wiki/Memoization) with `_memoizeComputed`
+or more generally memoize any given function with `_memoize`
+
+To implement a computed property as memoizable in the simplest fashion (although
+this is a trivial example, you would likely only want to memoize expensive functions)
+
+    behaviors: [
+        Biddle.MemoizationBehavior,
+    ],
+
+    properties: {
+        firstName: String,
+        lastName: String,
+        fullName: {
+            type: String,
+            computed: '_memoizeComputed("fullName", firstName, lastName)'
+            method: '_getFullName'
+        }
+    },
+
+    _getFullName: function (first, last) {
+        return first + ' ' + last;
+    }
+
+Given that the default hash function is `JSON.stringify` which may be inappropriate
+for object/array parameters you may wish to override the default hashing method
+for a specific property.
+
+    properties: {
+        foo: Object,
+        bar: Object,
+        foobar: {
+            type: String,
+            computed: '_memoizeComputed("fullName", foo, bar)'
+            method: '_computeFoobar',
+            hashFn: (foo, bar) => foo.id + ':' + bar.id
+        }
+    },
+
+To generally memoize any function you may do the following
+
+    var someValue = this._memoize(this.someExpensiveFunction)(arg2, arg2, arg3);
+
+Cache invalidation happens manually with the `_invalidateMemoizeCache` method
+
+    var foo = this._memoize(this.bar)('Hello');
+    // ...
+    this._invalidateMemoizeCache(this.bar);
+
+@demo demo/demo.html
+@polymerBehavior
+*/
+  Biddle.MemoizationBehavior = {
+
+    /**
+     * Default method to create the hash to key a value in the function's cache
+     * @type {!Function}
+     */
+    _defaultMemoizeHash: (...args) => JSON.stringify(args),
+
+    /**
+     * Memoize a given function
+     * @param {!Function} func   Function to memoize
+     * @param {Function}  hashFn Method to create the hash key, defaults to `_defaultMemoizeHash`
+     * @return {Function}
+     */
+    _memoize: function (func, hashFn) {
+      hashFn = hashFn || this._defaultMemoizeHash;
+      return function (...args) {
+        var key = '' + hashFn.apply(this, args);
+        func.cache = func.cache || {};
+        if (!(key in func.cache)) {
+          func.cache[key] = func.apply(this, args);
+        }
+        return func.cache[key];
+      };
+    },
+
+    /**
+     * Memoize a given computed function
+     * @param {!String} property Name of property being computed (camelCase)
+     * @param {...*}    args     Any args to pass to compute function as normal
+     * @return {*}
+     */
+    _memoizeComputed: function (property, ...args) {
+      var propertyDef = this.properties[property];
+      var hashFn = propertyDef.hashFn || this._defaultMemoizeHash;
+      return this._memoize(this[propertyDef.method], hashFn).apply(this, args);
+    },
+
+    /**
+     * Invalidate the cache for a given method
+     * @param {String} method
+     */
+    _invalidateMemoizeCache: function (method) {
+      method.cache = {};
+    }
+  };
+</script>

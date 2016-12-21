@@ -1,0 +1,68 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-input/iron-input.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../memoization-behavior.html">
+
+<dom-module id="simple-el">
+  <template>
+    <h1>[[fullName]]</h1>
+    <div>
+        <input is="iron-input" value="{{first::change}}">
+        <input is="iron-input" value="{{last::change}}">
+        <paper-button on-tap="_clearNameCache" raised>Clear Cache</paper-button>
+        <paper-button on-tap="_printCache" raised>Print Cache</paper-button>
+    </div>
+    <div>
+        <h2>Cache</h2>
+        <ul>
+        <template is="dom-repeat" items="[[_cacheItems]]">
+            <li>[[item.key]] =&gt; [[item.value]]</li>
+        </template>
+        </ul>
+    </div>
+  </template>
+  <script>
+    Polymer({
+
+      is: 'simple-el',
+
+      properties: {
+        first: String,
+        last: String,
+        fullName: {
+          type: String,
+          computed: '_memoizeComputed("fullName", first, last)',
+          method: '_computeFullName',
+        },
+
+        _cacheItems: Array,
+      },
+
+      behaviors: [
+        Biddle.MemoizationBehavior
+      ],
+
+      _computeFullName: function (first, last) {
+        console.log(`Cache miss: ${first}, ${last}`);
+        return first + ' ' + last;
+      },
+
+      _clearNameCache: function () {
+        this._invalidateMemoizeCache(this._computeFullName);
+        this._printCache();
+      },
+
+      _printCache: function () {
+        var cache = this._computeFullName.cache;
+        var kv = [];
+        for (var k in cache) {
+          if (cache.hasOwnProperty(k)) {
+            kv.push({key: k, value: cache[k] })
+          }
+        }
+
+        this._cacheItems = kv;
+      }
+    });
+  </script>
+</dom-module>

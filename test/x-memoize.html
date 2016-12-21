@@ -1,0 +1,35 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-input/iron-input.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../memoization-behavior.html">
+
+<dom-module id="x-memoize">
+  <template>
+  </template>
+  <script>
+    Polymer({
+
+      is: 'x-memoize',
+
+      properties: {
+        first: String,
+        last: String,
+        fullName: {
+          type: String,
+          computed: '_memoizeComputed("fullName", first, last)',
+          method: 'computeFullName',
+          hashFn: (first, last) => first + ':' + last
+        },
+      },
+
+      behaviors: [
+        Biddle.MemoizationBehavior
+      ],
+
+      computeFullName: function (first, last) {
+        return first + ' ' + last;
+      },
+    });
+  </script>
+</dom-module>
+
