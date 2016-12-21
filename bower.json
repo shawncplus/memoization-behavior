@@ -1,6 +1,6 @@
 {
   "name": "memoization-behavior",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Polymer behavior adding memoization helpers",
   "main": "memoization-behavior.html",
   "license": "MIT",
