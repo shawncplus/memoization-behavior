@@ -1,4 +1,4 @@
-memoization-behavior [![Build Status](https://travis-ci.org/shawncplus/memoization-behavior.svg?branch=master)](https://travis-ci.org/shawncplus/memoization-behavior) [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://beta.webcomponents.org/element/shawncplus/memoizable-behavior)
+memoization-behavior [![Build Status](https://travis-ci.org/shawncplus/memoization-behavior.svg?branch=master)](https://travis-ci.org/shawncplus/memoization-behavior) [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://beta.webcomponents.org/element/shawncplus/memoization-behavior)
 
 ====================
 
