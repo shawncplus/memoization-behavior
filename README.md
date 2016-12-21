@@ -1,3 +1,6 @@
+memoization-behavior [![Build Status](https://travis-ci.org/shawncplus/memoization-behavior.svg?branch=master)](https://travis-ci.org/shawncplus/memoization-behavior)
+====================
+
 `Biddle.MemoizationBehavior` allows you to define a computed property
 as memoizable (http://en.wikipedia.org/wiki/Memoization) with `_memoizeComputed`
 or more generally memoize any given function with `_memoize`
