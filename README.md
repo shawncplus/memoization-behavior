@@ -6,6 +6,13 @@ memoization-behavior [![Build Status](https://travis-ci.org/shawncplus/memoizati
 as memoizable (http://en.wikipedia.org/wiki/Memoization) with `_memoizeComputed`
 or more generally memoize any given function with `_memoize`
 
+> Note: Methods of this behavior are "private" as a matter of convention and will
+> not appear on beta.webcomponents.org hosted documentation. I've made the
+> executive decision that it wouldn't be wise to allow the memoization methods
+> to be published as part of an element's public API. Doing so may entice some
+> hapless individual into creating some kind of element whose purpose is to
+> memoize all computed properties in all elements ever.
+
 To implement a computed property as memoizable in the simplest fashion (although
 this is a trivial example, you would likely only want to memoize expensive functions)
 
